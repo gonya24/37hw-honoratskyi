@@ -1,0 +1,20 @@
+.containerComment {
+border: 1px black dotted;
+}
+.email {
+border-bottom: 1px black dotted;
+}
+.search {
+    width: 30px;
+}
+#errorMessage {
+    border: 2px red dotted;
+    padding: 10px;
+    margin-bottom: 15px;
+    width: 350px;
+    text-align: center;
+}
+#errorMessage span {
+    color: red;
+    font-weight: bold;
+}
