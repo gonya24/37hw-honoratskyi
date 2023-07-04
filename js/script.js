@@ -1,60 +1,61 @@
-async function getIdFromInput () {
-    
+async function getIdFromInput() {
+
     const data = document.getElementById('search');
     const errorDiv = document.createElement('div')
-    errorDiv.setAttribute('id','errorMessage')
-    const btn = document.getElementById('btnSearch').addEventListener('click', ()=>{
-        if(document.getElementById('containerPost')) {
+    errorDiv.setAttribute('id', 'errorMessage')
+    const btn = document.getElementById('btnSearch').addEventListener('click', () => {
+        if (document.getElementById('containerPost')) {
             document.getElementById('containerPost').remove()
         }
-        if(document.getElementById('errorMessage')) {
+        if (document.getElementById('errorMessage')) {
             document.getElementById('errorMessage').remove()
         }
 
-        if(document.getElementById('containerComment')) {
+        if (document.getElementById('containerComment')) {
             document.getElementById('containerComment').remove()
         }
-        try { 
-            
-            if (data.value<=100&& data.value>0) {
-                getPost(data.value,data)
-                
+        try {
+
+            if (data.value <= 100 && data.value > 0) {
+                getPost(data.value, data)
+
             } else {
-                throw ('You should to enter only <span>NUMBER</span> from <span>1</span> to <span>100</span>') 
+                throw ('You should to enter only <span>NUMBER</span> from <span>1</span> to <span>100</span>')
             }
         }
         catch (error) {
-            errorDiv.innerHTML = error
-            document.querySelector('.container').prepend(errorDiv)
+            errorMessage(error)
         }
-        
-        
-        
-});
-    
+
+    });
 }
-async function simplePost (obj,btn){
-     
+function errorMessage(error) {
+    const errorDiv = document.createElement('div')
+    errorDiv.setAttribute('id', 'errorMessage')
+    errorDiv.innerHTML = error
+    document.querySelector('.container').prepend(errorDiv)
+}
+ function simplePost(obj, btn) {
+
     // 
     const container = document.createElement('div');
     const title = document.createElement('h2');
-    const body  =document.createElement('p');
+    const body = document.createElement('p');
     const id = document.createElement('p');
     const commentsBtn = document.createElement('input');
     // 
-    
     container.innerHTML = '';
-    container.setAttribute('id','containerPost')
+    container.setAttribute('id', 'containerPost')
     id.innerHTML = `ID Post: ${obj.id}`;
     title.innerText = obj.title;
     body.innerText = obj.body;
     commentsBtn.type = "button"
     commentsBtn.value = "View comments"
-    commentsBtn.addEventListener('click', ()=> {
-        if(document.getElementById('containerComment')) {
+    commentsBtn.addEventListener('click', () => {
+        if (document.getElementById('containerComment')) {
             document.getElementById('containerComment').remove()
-        } else{
-        getComments(obj.id)
+        } else {
+            getComments(obj.id)
         }
     })
     // 
@@ -63,13 +64,11 @@ async function simplePost (obj,btn){
     container.append(title)
     container.append(body)
     container.append(commentsBtn)
-    //
-    btn.value = ''
     // 
-} 
-function viewComments (arr){
+}
+function viewComments(arr) {
     const container = document.createElement('div')
-    container.setAttribute('id','containerComment')
+    container.setAttribute('id', 'containerComment')
     for (let key of arr) {
         // 
         const containerComment = document.createElement('div')
@@ -81,8 +80,8 @@ function viewComments (arr){
         email.classList.add('email')
         //  
         name.innerText = key.name
-        email.innerHTML =` <b>Email:</b> ${key.email}`
-        body.innerText =`Comment: \n${key.body}`
+        email.innerHTML = ` <b>Email:</b> ${key.email}`
+        body.innerText = `Comment: \n${key.body}`
         // 
         container.append(containerComment)
         containerComment.append(name)
@@ -92,22 +91,28 @@ function viewComments (arr){
     document.getElementById('containerPost').insertAdjacentElement('afterend', container)
 
 }
-async function getComments (id) {
-     fetch(`https://jsonplaceholder.typicode.com/posts/${id}/comments`)
-      .then(response => response.json())
-      .then(json => viewComments (json))
-      .catch((ex)=> console.log('error'))
-      
-}
-async function getPost (id,btn) {
+async function getComments(id) {
     try {
-    fetch(`https://jsonplaceholder.typicode.com/posts/${id}`)
-      .then(response => response.json())
-      .then(json => simplePost(json,btn))
+        const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}/comments`)
+        const json = await response.json()
+        viewComments(json)
     }
-    catch(error) {
-        console.log('fail')
+    catch (error) {
+        errorMessage(error)
     }
+
+}
+async function getPost(id, btn) {
+    try {
+        const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`)
+        const json = await response.json()
+        simplePost(json, btn)
+    }
+    catch (error) {
+        errorMessage(error)
+    }
+
+
 }
 
 getIdFromInput()
